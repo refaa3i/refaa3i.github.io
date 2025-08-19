@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+    <meta charset="UTF-8">
+    <title>قائمة الطعام</title>
+</head>
+<body>
+    <h1>قائمة الأصناف</h1>
+    <ul id="menu-list"></ul>
+    <h2>طلبك:</h2>
+    <ul id="order-list"></ul>
+
+    <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore.js"></script>
+
+    <script>
+        // إعداد Firebase
+        const firebaseConfig = {
+            apiKey: "YOUR_API_KEY",
+            authDomain: "YOUR_PROJECT.firebaseapp.com",
+            projectId: "YOUR_PROJECT_ID",
+            storageBucket: "YOUR_PROJECT.appspot.com",
+            messagingSenderId: "YOUR_SENDER_ID",
+            appId: "YOUR_APP_ID"
+        };
+        const app = firebase.initializeApp(firebaseConfig);
+        const db = firebase.firestore(app);
+
+        const menuList = document.getElementById("menu-list");
+        const orderList = document.getElementById("order-list");
+        let order = [];
+
+        // قراءة قائمة الطعام من Firebase
+        db.collection("menu").get().then(snapshot => {
+            snapshot.forEach(doc => {
+                const item = doc.data();
+                const li = document.createElement("li");
+                li.textContent = `${item.name} - ${item.price} جنيه`;
+                li.style.cursor = "pointer";
+                li.onclick = () => {
+                    order.push(item);
+                    updateOrder();
+                };
+                menuList.appendChild(li);
+            });
+        });
+
+        function updateOrder() {
+            orderList.innerHTML = "";
+            order.forEach(item => {
+                const li = document.createElement("li");
+                li.textContent = `${item.name} - ${item.price} جنيه`;
+                orderList.appendChild(li);
+            });
+        }
+    </script>
+</body>
+</html>
