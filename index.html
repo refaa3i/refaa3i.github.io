@@ -1,11 +1,47 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>موقعي الأول</title>
+  <title>Cafe System</title>
 </head>
 <body>
-  <h1>أهلاً بك في موقعي!</h1>
-  <p>هذا الموقع مرفوع على GitHub Pages 🚀</p>
+  <h1>قائمة الطاولات</h1>
+  <ul id="tables-list"></ul>
+
+  <script type="module">
+    // استيراد مكتبات فايربيز
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+    import { getFirestore, collection, getDocs } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+    // إعدادات مشروعك في Firebase
+    const firebaseConfig = {
+      apiKey: "AIzaSyD3XMrd5OCzQD_lvRrwjT6bbZ5Hka5OxrA",
+      authDomain: "cafe-system-ac9c5.firebaseapp.com",
+      projectId: "cafe-system-ac9c5",
+      storageBucket: "cafe-system-ac9c5.appspot.com",
+      messagingSenderId: "451117723542",
+      appId: "1:451117723542:web:0d04a9c02331f3064d37b7",
+      measurementId: "G-Y05585M7S0"
+    };
+
+    // تهيئة التطبيق
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+
+    // دالة تجيب الطاولات من Firestore
+    async function getTables() {
+      const tablesList = document.getElementById("tables-list");
+      const querySnapshot = await getDocs(collection(db, "tables"));
+
+      querySnapshot.forEach((doc) => {
+        const li = document.createElement("li");
+        li.textContent = `${doc.id} - ${JSON.stringify(doc.data())}`;
+        tablesList.appendChild(li);
+      });
+    }
+
+    // استدعاء الدالة
+    getTables();
+  </script>
 </body>
 </html>
