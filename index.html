@@ -1,42 +1,138 @@
 <!DOCTYPE html>
-<html>
+<html lang="ar">
 <head>
   <meta charset="UTF-8">
-  <title>Firebase Test</title>
+  <title>واجهة البائع</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      direction: rtl;
+      text-align: center;
+    }
+    .tables {
+      display: grid;
+      grid-template-columns: repeat(5, 100px);
+      gap: 15px;
+      justify-content: center;
+      margin-top: 30px;
+    }
+    .table {
+      width: 100px;
+      height: 100px;
+      background-color: green; /* اللون الافتراضي */
+      color: white;
+      font-weight: bold;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      border-radius: 12px;
+      transition: background-color 0.3s;
+    }
+    .popup {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background: #fff;
+      padding: 20px;
+      border: 2px solid #444;
+      border-radius: 10px;
+      display: none;
+      width: 300px;
+      text-align: right;
+    }
+    .popup h2 {
+      margin-top: 0;
+    }
+    .popup ul {
+      list-style: none;
+      padding: 0;
+    }
+    .popup ul li {
+      padding: 5px 0;
+      border-bottom: 1px solid #ddd;
+    }
+    .popup h3 {
+      margin-top: 10px;
+      color: darkred;
+    }
+    .close-btn {
+      margin-top: 10px;
+      background: red;
+      color: white;
+      padding: 5px 10px;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+    }
+  </style>
 </head>
 <body>
-  <h1>اختبار ربط فايربيز</h1>
-  <div id="output">جارٍ التحميل...</div>
+  <h1>واجهة البائع</h1>
+  <div class="tables" id="tablesContainer"></div>
 
-  <!-- إضافة مكتبات فايربيز -->
-  <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore.js"></script>
+  <div class="popup" id="popup">
+    <h2>تفاصيل الطلب</h2>
+    <ul id="orderDetails"></ul>
+    <h3 id="totalPrice"></h3>
+    <button class="close-btn" onclick="closePopup()">إغلاق</button>
+  </div>
 
-  <!-- كود الربط مع مشروعك -->
   <script>
-    const firebaseConfig = {
-      apiKey: "ضع_القيمة_بتاعتك",
-      authDomain: "ضع_القيمة_بتاعتك",
-      projectId: "ضع_القيمة_بتاعتك",
-      storageBucket: "ضع_القيمة_بتاعتك",
-      messagingSenderId: "ضع_القيمة_بتاعتك",
-      appId: "ضع_القيمة_بتاعتك"
-    };
+    const tablesContainer = document.getElementById("tablesContainer");
+    const popup = document.getElementById("popup");
+    const orderDetails = document.getElementById("orderDetails");
+    const totalPriceEl = document.getElementById("totalPrice");
 
-    // تهيئة الفايربيز
-    const app = firebase.initializeApp(firebaseConfig);
-    const db = firebase.firestore();
+    const colors = ["green", "red", "yellow", "blue"];
+    
+    // بيانات افتراضية للطلبات
+    const sampleOrders = [
+      { items: [{name:"قهوة", qty:2, price:25}, {name:"شاي", qty:1, price:15}], total:65 },
+      { items: [{name:"بيتزا", qty:1, price:70}, {name:"عصير", qty:2, price:20}], total:110 },
+      { items: [{name:"شوربة", qty:3, price:15}, {name:"رز", qty:1, price:30}], total:75 }
+    ];
 
-    // تجربة قراءة Collection
-    db.collection("Tables").get().then((querySnapshot) => {
-      let html = "";
-      querySnapshot.forEach((doc) => {
-        html += `<p>${doc.id} : ${JSON.stringify(doc.data())}</p>`;
+    for (let i = 1; i <= 10; i++) {
+      const table = document.createElement("div");
+      table.className = "table";
+      table.textContent = "طاولة " + i;
+      table.dataset.colorIndex = 0;
+      table.dataset.orderIndex = (i - 1) % sampleOrders.length; // يوزع الطلبات تجريبياً
+      table.onclick = () => handleTableClick(table);
+      tablesContainer.appendChild(table);
+    }
+
+    function handleTableClick(table) {
+      let index = parseInt(table.dataset.colorIndex);
+      index = (index + 1) % colors.length;
+      table.style.backgroundColor = colors[index];
+      table.dataset.colorIndex = index;
+
+      if (colors[index] === "red") {
+        // إظهار الطلب
+        const order = sampleOrders[table.dataset.orderIndex];
+        showPopup(order);
+      } else {
+        closePopup();
+      }
+    }
+
+    function showPopup(order) {
+      orderDetails.innerHTML = "";
+      order.items.forEach(item => {
+        const li = document.createElement("li");
+        li.textContent = `${item.name} ×${item.qty} - ${item.qty * item.price} ج.م`;
+        orderDetails.appendChild(li);
       });
-      document.getElementById("output").innerHTML = html;
-    }).catch((error) => {
-      document.getElementById("output").innerText = "خطأ: " + error;
-    });
+      totalPriceEl.textContent = "الإجمالي: " + order.total + " ج.م";
+      popup.style.display = "block";
+    }
+
+    function closePopup() {
+      popup.style.display = "none";
+    }
   </script>
 </body>
 </html>
