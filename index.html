@@ -1,47 +1,42 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
   <meta charset="UTF-8">
-  <title>Cafe System</title>
+  <title>Firebase Test</title>
 </head>
 <body>
-  <h1>قائمة الطاولات</h1>
-  <ul id="tables-list"></ul>
+  <h1>اختبار ربط فايربيز</h1>
+  <div id="output">جارٍ التحميل...</div>
 
-  <script type="module">
-    // استيراد مكتبات فايربيز
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-    import { getFirestore, collection, getDocs } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+  <!-- إضافة مكتبات فايربيز -->
+  <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore.js"></script>
 
-    // إعدادات مشروعك في Firebase
+  <!-- كود الربط مع مشروعك -->
+  <script>
     const firebaseConfig = {
-      apiKey: "AIzaSyD3XMrd5OCzQD_lvRrwjT6bbZ5Hka5OxrA",
-      authDomain: "cafe-system-ac9c5.firebaseapp.com",
-      projectId: "cafe-system-ac9c5",
-      storageBucket: "cafe-system-ac9c5.appspot.com",
-      messagingSenderId: "451117723542",
-      appId: "1:451117723542:web:0d04a9c02331f3064d37b7",
-      measurementId: "G-Y05585M7S0"
+      apiKey: "ضع_القيمة_بتاعتك",
+      authDomain: "ضع_القيمة_بتاعتك",
+      projectId: "ضع_القيمة_بتاعتك",
+      storageBucket: "ضع_القيمة_بتاعتك",
+      messagingSenderId: "ضع_القيمة_بتاعتك",
+      appId: "ضع_القيمة_بتاعتك"
     };
 
-    // تهيئة التطبيق
-    const app = initializeApp(firebaseConfig);
-    const db = getFirestore(app);
+    // تهيئة الفايربيز
+    const app = firebase.initializeApp(firebaseConfig);
+    const db = firebase.firestore();
 
-    // دالة تجيب الطاولات من Firestore
-    async function getTables() {
-      const tablesList = document.getElementById("tables-list");
-      const querySnapshot = await getDocs(collection(db, "tables"));
-
+    // تجربة قراءة Collection
+    db.collection("Tables").get().then((querySnapshot) => {
+      let html = "";
       querySnapshot.forEach((doc) => {
-        const li = document.createElement("li");
-        li.textContent = `${doc.id} - ${JSON.stringify(doc.data())}`;
-        tablesList.appendChild(li);
+        html += `<p>${doc.id} : ${JSON.stringify(doc.data())}</p>`;
       });
-    }
-
-    // استدعاء الدالة
-    getTables();
+      document.getElementById("output").innerHTML = html;
+    }).catch((error) => {
+      document.getElementById("output").innerText = "خطأ: " + error;
+    });
   </script>
 </body>
 </html>
