@@ -3,18 +3,18 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>قائمة طاولة 1</title>
+  <title>قائمة الطعام - طاولة 1</title>
 </head>
 <body>
   <h1>قائمة الطعام - طاولة 1</h1>
-  <div id="menu"></div>
+  <ul id="menu"></ul>
 
   <script type="module">
-    // Import Firebase SDKs
+    // استيراد مكتبات فايربيز
     import { initializeApp } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-app.js";
     import { getDatabase, ref, onValue } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-database.js";
 
-    // Your web app's Firebase configuration
+    // بيانات مشروعك
     const firebaseConfig = {
       apiKey: "AIzaSyD3XMrd5OCzQD_lvRrwjT6bbZ5Hka5OxrA",
       authDomain: "cafe-system-ac9c5.firebaseapp.com",
@@ -26,20 +26,20 @@
       databaseURL: "https://cafe-system-ac9c5-default-rtdb.firebaseio.com"
     };
 
-    // Initialize Firebase
+    // تهيئة التطبيق
     const app = initializeApp(firebaseConfig);
     const db = getDatabase(app);
 
-    // Reference to menu
+    // المرجع على قائمة الطعام
     const menuRef = ref(db, "menu");
-    const menuDiv = document.getElementById("menu");
+    const menuUl = document.getElementById("menu");
 
-    // Listen to data
+    // جلب البيانات
     onValue(menuRef, (snapshot) => {
       const data = snapshot.val();
-      menuDiv.innerHTML = "";
+      menuUl.innerHTML = "";
       for (let item in data) {
-        menuDiv.innerHTML += `<p>${data[item].name} - ${data[item].price} جنيه</p>`;
+        menuUl.innerHTML += `<li>${data[item].name}</li>`;
       }
     });
   </script>
